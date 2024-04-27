@@ -44,3 +44,7 @@ the file "test.s", the script has to be called as follows:
 
 The `clean.sh` script removes all object files (".o") and binaries (".bin") from
 the current working directory.
+
+## Status Code
+
+The `status_code.sh` script prints the status code of the last program that ran.

@@ -2,8 +2,8 @@
 #
 # DESCRIPTION:
 # This program sets an exit code.
-# After the program is run, the exit code can be viewed from the shell via
-# `echo $?`
+# After the program is run, the exit code can be viewed via the status_code 
+# script.
 
 .section .data
 

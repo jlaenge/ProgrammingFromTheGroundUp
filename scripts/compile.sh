@@ -10,7 +10,7 @@
 
 echo "Compiling \"$1\" ..."
 
-as $1.s -o $1.o
+as -g $1.s -o $1.o
 ld $1.o -o $1.bin
 
 echo "Compiled successfully! To execute the binary, run: \"./$1.bin\""

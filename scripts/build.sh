@@ -1,4 +1,4 @@
-# compile.sh
+# build.sh
 # Compiles a given assembly program into an executable binary.
 # 
 # PARAMETERS: Provide the name of the program

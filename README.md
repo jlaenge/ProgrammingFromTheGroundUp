@@ -24,12 +24,12 @@ cleanup script easier. (See [cleanup](#clean) below).
 
 For convenience, the following scripts can be used:
 
-### Compile
+### Build
 
-The `compile.sh` compiles a given program.
+The `build.sh` compiles (i.e. assembles and links) a given program.
 
 ```
-./compile.sh <program>
+./build.sh <program>
 ```
 
 Attention: The script assumes there is a source file (".s") with the same name

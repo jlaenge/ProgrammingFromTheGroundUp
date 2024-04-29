@@ -54,6 +54,6 @@ identity:
 
     # tear down stack frame
     identity_end:
-    mov %rsp, %rbp
+    mov %rbp, %rsp
     pop %rbp
     ret

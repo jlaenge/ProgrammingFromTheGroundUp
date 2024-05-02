@@ -1,4 +1,4 @@
-# factorial_recursive.s
+# factorial_iterative.s
 #
 # DESCRIPTION: Computes the factorial of a given number in an iterative fashion,
 # With factorial(n), or n!, being defined as:

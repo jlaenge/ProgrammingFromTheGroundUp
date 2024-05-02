@@ -1,6 +1,6 @@
-# exponent_iterative.s
+# exponent_recursive.s
 #
-# DESCRIPTION: Computes the exponential function, in an iterative fashion.
+# DESCRIPTION: Computes the exponential function, in a recursive fashion.
 # The exponent exponent(base, exponent) is defined as follows:
 #
 # ```
@@ -37,21 +37,22 @@ exponent:
     push %rbp
     mov %rsp, %rbp
 
-    # load accumulator, base and exponent
-    mov $1, %rax        # accumulator
-    mov 16(%rbp), %rbx  # base
-    mov 24(%rbp), %rcx  # exponent
+    # load base and exponent
+    mov 16(%rbp), %rax  # base
+    mov 24(%rbp), %rbx  # exponent
 
-    exponent_loop:
-
-    # exponent = 0 -> end
-    cmp $0, %rcx
+    # base case: exponent = 1 -> base
+    cmp $1, %rbx
     je exponent_end
 
-    # exponent > 1 -> multiply by base and decrement exponent
+    # step case: base * exponent(base, exponent - 1)
+    dec %rbx
+    push %rbx
+    push %rax
+    call exponent
+    add $16, %rsp
+    mov 16(%rbp), %rbx
     imul %rbx, %rax
-    dec %rcx
-    jmp exponent_loop
 
     exponent_end:
     # tear down stack frame

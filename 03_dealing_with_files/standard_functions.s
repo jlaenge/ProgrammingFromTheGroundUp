@@ -20,31 +20,32 @@
 .equ FD_STDOUT, 1
 .equ FD_STDERR, 2
 
-.equ HELLO_WORLD_SIZE, 12
 HELLO_WORLD:
-    .ascii "Hello world\n"
+    .ascii "Hello World!\n\0"
 
 FILENAME:
     .ascii "standard_function.s"
 
 .section .bss
 .equ BUFFER_SIZE, 512
-BUFFER:
-    .lcomm BUFFER, BUFFER_SIZE
+.lcomm BUFFER, BUFFER_SIZE
 
 .section .text
 .globl _start
 _start:
 
-    # print hello world
-    push $HELLO_WORLD_SIZE
+    # print standard: hello world
     push $HELLO_WORLD
-    push $FD_STDOUT
-    call write
-    add $24, %rsp
+    call print_standard
+    add $8, %rsp
+
+    # print error: hello world
+    push $HELLO_WORLD
+    call print_error
+    add $8, %rsp
 
     # read this file and print it
-    push $O666      # all permissions
+    push $0666      # all permissions
     push $0         # readonly
     push $FILENAME
     call open
@@ -63,8 +64,69 @@ _start:
 # HIGHER-LEVEL PRINT FUNCTIONS
 # ==============================================================================
 
-.type print, @function
-print:
+# print_standard
+#
+# DESCRIPTION: prints to standard output
+#
+# PARAMETERS:
+# 1. pointer - string to print
+#
+# RETURNS:
+# error code from write call
+.type print_standard, @function
+print_standard:
+    push %rbp
+    mov %rsp, %rbp
+
+    push $FD_STDOUT     # STDOUT filedescriptor
+    mov 16(%rbp), %rax
+    push %rax           # string to print
+    call print_helper
+    add $16, %rsp
+
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+# print_error
+#
+# DESCRIPTION: prints to standard error
+#
+# PARAMETERS:
+# 1. pointer - string to print
+#
+# RETURNS:
+# error code from write call
+.type print_error, @function
+print_error:
+    push %rbp
+    mov %rsp, %rbp
+
+    push $FD_STDERR     # STDERR filedescriptor
+    mov 16(%rbp), %rax
+    push %rax           # string to print
+    call print_helper
+    add $16, %rsp
+
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+# print_helper
+#
+# DESCRIPTION:
+# Prints the given string to the given filedescriptor
+# NOTE: This is intended as a helper function for print_standard and print_error
+# this function should not be called directly.
+#
+# PARAMETERS:
+# 1. pointer - to string to be printed
+# 2. filedescriptor - on which to print (i.e. write) the string
+#
+# RETURNS:
+# error code from write function call
+.type print_helper, @function
+print_helper:
     push %rbp
     mov %rsp, %rbp
 
@@ -81,7 +143,8 @@ print:
     push %rax       # number of bytes to write
     mov 16(%rbp), %rax
     push %rax       # pointer to string
-    push $FD_STDOUT
+    mov 24(%rbp), %rax
+    push %rax       # filedescriptor to print/write to
     call write
     add $24, %rsp
 
@@ -89,8 +152,9 @@ print:
     pop %rbp
     ret
 
-.type print_error, @function
-print_error:
+
+
+
 
 # ==============================================================================
 # STRING FUNCTIONS
@@ -130,6 +194,10 @@ string_length:
     mov %rbp, %rsp
     pop %rbp
     ret
+
+
+
+
 
 # ==============================================================================
 # FILE FUNCTIONS

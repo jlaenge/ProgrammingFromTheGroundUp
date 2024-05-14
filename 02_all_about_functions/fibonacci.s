@@ -53,10 +53,10 @@ fibonacci:
         sub $1, %rax
         push %rax
         call fibonacci
-        add $8, %rsp    # store result locally
+        add $8, %rsp
+        mov %rax, -8(%rbp)  # store result locally
 
         # call fibonacci(n-2)
-        mov %rax, -8(%rbp)
         mov 16(%rbp), %rax
         sub $2, %rax
         push %rax

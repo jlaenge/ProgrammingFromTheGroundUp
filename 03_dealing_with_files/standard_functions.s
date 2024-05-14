@@ -24,7 +24,7 @@ HELLO_WORLD:
     .ascii "Hello World!\n\0"
 
 FILENAME:
-    .ascii "/home/jakob/workspace/assembly/programming_from_the_ground_up/03_dealing_with_files/standard_functions.s\0"
+    .ascii "standard_functions.s\0"
 
 .section .bss
 .equ BUFFER_SIZE, 512

@@ -24,7 +24,7 @@ HELLO_WORLD:
     .ascii "Hello World!\n\0"
 
 FILENAME:
-    .ascii "standard_function.s"
+    .ascii "/home/jakob/workspace/assembly/programming_from_the_ground_up/03_dealing_with_files/standard_functions.s\0"
 
 .section .bss
 .equ BUFFER_SIZE, 512
@@ -35,21 +35,19 @@ FILENAME:
 _start:
 
     # print standard: hello world
-    push $HELLO_WORLD
-    call print_standard
-    add $8, %rsp
+    # push $HELLO_WORLD
+    # call print_standard
+    # add $8, %rsp
 
     # print error: hello world
-    push $HELLO_WORLD
-    call print_error
-    add $8, %rsp
+    # push $HELLO_WORLD
+    # call print_error
+    # add $8, %rsp
 
-    # read this file and print it
-    push $0666      # all permissions
-    push $0         # readonly
+    # print this file
     push $FILENAME
-    call open
-    add $24, %rsp
+    call print_file
+    add $8, %rsp   
 
     # exit
     push $0
@@ -63,6 +61,72 @@ _start:
 # ==============================================================================
 # HIGHER-LEVEL PRINT FUNCTIONS
 # ==============================================================================
+
+# print_file
+#
+# DESCRIPTION: Prints the given file to standard output
+#
+# PARAMETERS:
+# 1. filename - name of file to read
+#
+# RETURNS: NONE
+.type print_file, @function
+print_file:
+    push %rbp
+    mov %rsp, %rbp
+    sub $8, %rsp
+
+    # load parameters
+    # - rax: pointer to filename
+    mov 16(%rbp), %rax
+
+    # open file readonly
+    push $0666      # all permissions
+    push $0         # readonly
+    push %rax       # filename
+    call open
+    add $24, %rsp
+
+    mov %rax, -8(%rbp)  # store filedescriptor
+
+    # read/write loop
+    print_file_loop:
+
+        # load local variables
+        mov -8(%rbp), %rax
+
+        # read chunk
+        push $BUFFER_SIZE   # buffer size
+        push $BUFFER        # buffer
+        push %rax           # filedescriptor
+        call read
+        add $24, %rsp
+
+        # check for error / EOF
+        cmp $0, %rax
+        jle print_file_end
+
+        # write chunk
+        push %rax       # length (number of bytes read)
+        push $BUFFER    # buffer
+        push $FD_STDOUT # standard output
+        call write
+        add $24, %rsp
+
+        jmp print_file_loop
+
+    print_file_end:
+
+    # close file
+    mov -8(%rbp), %rax
+    push %rax           # filedescriptor
+    call close
+    add $8, %rsp
+
+    # exit function
+    mov %rbp, %rsp
+    pop %rbp
+    ret
 
 # print_standard
 #
@@ -129,6 +193,8 @@ print_error:
 print_helper:
     push %rbp
     mov %rsp, %rbp
+
+    sub $8, %rsp    # make space for local variables
 
     # load parameters:
     # rax - string pointer

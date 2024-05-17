@@ -4,25 +4,12 @@
 # Defines functions for the standard operations on files (i.e. open, close,
 # read and write).
 
+.include "linux_syscalls.s"
+.include "standard_filedescriptors.s"
+
 # ==============================================================================
 # CONSTANTS & BUFFERS
 # ==============================================================================
-
-.section .data
-
-# LINUX SYSTEMCALLS
-.equ SYSCALL_INTERRUPT, 0x80
-
-.equ SYSCALL_EXIT, 1
-.equ SYSCALL_READ, 3
-.equ SYSCALL_WRITE, 4
-.equ SYSCALL_OPEN, 5
-.equ SYSCALL_CLOSE, 6
-
-# LINUX FILEDESCRIPTORS
-.equ FD_STDIN, 0
-.equ FD_STDOUT, 1
-.equ FD_STDERR, 2
 
 .section .bss
 .equ BUFFER_SIZE, 512

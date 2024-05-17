@@ -8,23 +8,9 @@
 
 .section .data
 
-# LINUX SYSTEMCALLS
-.equ SYSCALL_INTERRUPT, 0x80
-
-.equ SYSCALL_EXIT, 1
-.equ SYSCALL_READ, 3
-.equ SYSCALL_WRITE, 4
-.equ SYSCALL_OPEN, 5
-.equ SYSCALL_CLOSE, 6
-
-# LINUX FILEDESCRIPTORS
-.equ FD_STDIN, 0
-.equ FD_STDOUT, 1
-.equ FD_STDERR, 2
-
 .equ BUFFER_SIZE, 12
 BUFFER:
-    .ascii "Hello world\n"
+    .ascii "Hello world\n\0"
 
 .section .bss
 # .equ BUFFER_SIZE, 512

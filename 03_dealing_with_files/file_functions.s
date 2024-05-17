@@ -3,6 +3,9 @@
 # DESCRIPTION:
 # Defines functions for the standard operations on files (i.e. open, close,
 # read and write).
+#
+# COMPILATION:
+# This file needs to be linked against the string_functions.
 
 .include "linux_syscalls.s"
 .include "standard_filedescriptors.s"
@@ -181,49 +184,6 @@ print_helper:
     push %rax       # filedescriptor to print/write to
     call write
     add $24, %rsp
-
-    mov %rbp, %rsp
-    pop %rbp
-    ret
-
-
-
-
-
-# ==============================================================================
-# STRING FUNCTIONS
-# ==============================================================================
-
-# string_length
-#
-# DESCRIPTION: computes the number of characters in the string
-#
-# PARAMETERS:
-# 1. pointer - to start of string
-#
-# RETURNS:
-# length of string
-.type string_length, @function
-string_length:
-    push %rbp
-    mov %rsp, %rbp
-
-    mov $0, %rax
-    mov 16(%rbp), %rbx
-
-    string_length_loop:
-        # load current character
-        movb (%rbx, %rax, 1), %cl
-
-        # check for null terminator
-        cmp $0, %cl
-        je string_length_end
-
-        # increment length and loop
-        inc %rax
-        jmp string_length_loop
-
-    string_length_end:
 
     mov %rbp, %rsp
     pop %rbp

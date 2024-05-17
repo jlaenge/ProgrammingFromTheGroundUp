@@ -1,8 +1,12 @@
-# standard_function
+# file_functions.s
 #
 # DESCRIPTION:
 # Defines functions for the standard operations on files (i.e. open, close,
-# read and write) and showcases their usage.
+# read and write).
+
+# ==============================================================================
+# CONSTANTS & BUFFERS
+# ==============================================================================
 
 .section .data
 
@@ -20,39 +24,9 @@
 .equ FD_STDOUT, 1
 .equ FD_STDERR, 2
 
-HELLO_WORLD:
-    .ascii "Hello World!\n\0"
-
-FILENAME:
-    .ascii "standard_functions.s\0"
-
 .section .bss
 .equ BUFFER_SIZE, 512
 .lcomm BUFFER, BUFFER_SIZE
-
-.section .text
-.globl _start
-_start:
-
-    # print standard: hello world
-    # push $HELLO_WORLD
-    # call print_standard
-    # add $8, %rsp
-
-    # print error: hello world
-    # push $HELLO_WORLD
-    # call print_error
-    # add $8, %rsp
-
-    # print this file
-    push $FILENAME
-    call print_file
-    add $8, %rsp   
-
-    # exit
-    push $0
-    call exit
-    add $8, %rsp
 
 
 
@@ -61,6 +35,13 @@ _start:
 # ==============================================================================
 # HIGHER-LEVEL PRINT FUNCTIONS
 # ==============================================================================
+
+.section .text
+
+.globl print_file
+.globl print_standard
+.globl print_error
+.globl exit
 
 # print_file
 #

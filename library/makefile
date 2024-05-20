@@ -8,3 +8,7 @@ file_functions: string_functions
 file_functions_test: file_functions	
 	as -g -I "$(LIB)" $(LIB)/file_functions_test.s -o $(LIB)/file_functions_test.o
 	ld $(LIB)/string_functions.o $(LIB)/file_functions.o $(LIB)/file_functions_test.o -o $(LIB)/file_functions_test.bin
+
+library_clean:
+	rm -f $(LIB)/*.o
+	rm -f $(LIB)/*.bin

@@ -4,11 +4,8 @@ LIB=../library
 
 to_upper: file_functions
 	as -g -I "$(LIB)" to_upper.s -o to_upper.o
-	ld $(LIB)/string_functions.o $(LIB)/file_functions.o to_upper.o -o to_upper
+	ld $(LIB)/string_functions.o $(LIB)/file_functions.o to_upper.o -o to_upper.bin
 
-clean:
-	rm *.o
-	rm *.bin
-	cd $(LIB)
-	rm *.o
-	rm *.bin
+clean: library_clean
+	rm -f *.o
+	rm -f *.bin

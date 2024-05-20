@@ -4,8 +4,10 @@ string_functions:
 file_functions: string_functions
 	as -g -I "$(LIB)" $(LIB)/file_functions.s -o $(LIB)/file_functions.o
 
+system_functions:
+	as -g -I "$(LIB)" $(LIB)/system_functions.s -o $(LIB)/system_functions.o
 
-file_functions_test: file_functions	
+file_functions_test: file_functions	system_functions
 	as -g -I "$(LIB)" $(LIB)/file_functions_test.s -o $(LIB)/file_functions_test.o
 	ld $(LIB)/string_functions.o $(LIB)/file_functions.o $(LIB)/file_functions_test.o -o $(LIB)/file_functions_test.bin
 

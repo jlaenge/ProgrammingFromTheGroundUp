@@ -21,6 +21,7 @@
 .section .text
 
 .globl string_length
+.globl to_upper
 
 # string_length
 #
@@ -53,6 +54,56 @@ string_length:
 
     string_length_end:
 
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+# to_upper
+#
+# DESCRIPTION: Converts a given string to uppercase.
+# In particular, every lowercase character (a - z) is converted to the
+# respective uppercase one (A - Z).
+#
+# INPUT:
+# 1. pointer to a null-terminated ascii string
+#
+# OUTPUT: NONE
+.type to_upper, @function
+to_upper:
+    # create stack frame
+    push %rbp
+    mov %rsp, %rbp
+
+    # retrieve string
+    mov 16(%rbp), %rax
+
+    # loop over buffer
+    to_upper_loop:
+
+    # load the current character
+    # cl: current character
+    movb (%rax), %cl
+
+    # test for null terminator
+    cmp $NULL_TERMINATOR, %cl
+    je to_upper_exit
+
+    # test: 'a' <= cl <= 'z'
+    cmp $'a', %cl
+    jl to_upper_next_iteration
+    cmp $'z', %cl
+    jg to_upper_next_iteration
+
+    # convert to uppercase
+    add $('A' - 'a'), %cl
+    movb %cl, (%rax)
+
+    to_upper_next_iteration:
+    inc %rax
+    jmp to_upper_loop
+
+    to_upper_exit:
+    # destroy stack frame
     mov %rbp, %rsp
     pop %rbp
     ret

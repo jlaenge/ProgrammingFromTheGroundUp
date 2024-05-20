@@ -8,7 +8,7 @@
 # This file needs to be linked against the string_functions.
 
 .include "linux_syscalls.s"
-.include "standard_filedescriptors.s"
+.include "filedescriptors.s"
 
 # ==============================================================================
 # CONSTANTS & BUFFERS

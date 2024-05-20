@@ -1,4 +1,4 @@
-# standard_filedescriptors.s
+# filedescriptors.s
 #
 # DESCRIPTION:
 # This file defines constants for the standard filedescriptors that are present

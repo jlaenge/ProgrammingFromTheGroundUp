@@ -6,6 +6,8 @@
 # converts every lowercase character (a - z) to the respective uppercase one
 # (A - Z).
 
+.include "filedescriptors.s"
+
 .section .data
 
 .equ BUFFER_SIZE, 12
@@ -21,141 +23,14 @@ BUFFER:
 .globl _start
 _start:
     # print hello world
-    push $BUFFER_SIZE
     push $BUFFER
-    push $FD_STDOUT
-    call write
+    call print_standard
     add $24, %rsp
 
     # exit
     push $0
     call exit
     add $8, %rsp
-
-    # unreachable
-
-    # convert
-    push $5
-    push $BUFFER
-    call to_upper
-    add $16, %rsp
-
-    # quit
-    mov $1, %rax
-    mov $0, %rbx
-    int $0x80
-
-# exit
-#
-# PARAMETERS:
-# 1. exitcode - to return
-#
-# RETURNS: does not return
-.type exit, @function
-exit:
-    push %rbp
-    mov %rsp, %rbp
-
-    mov $SYSCALL_EXIT, %rax
-    mov 16(%rbp), %rbx
-    int $SYSCALL_INTERRUPT
-
-    # unreachable
-    mov %rbp, %rsp
-    pop %rbp
-    ret
-
-# open
-#
-# PARAMETERS:
-# 1. filename - name of file to be opened
-# 2. intentions - mode of file (read-only, read-write, etc.)
-# 3. permissions - permission octet (only relevant, if file is created)
-#
-# RETURNS:
-# filedescriptor, or error code
-.type open, @function
-open:
-    push %rbp
-    mov %rsp, %rbp
-
-    mov $SYSCALL_OPEN, %rax
-    mov 16(%rbp), %rbx
-    mov 24(%rbp), %rcx
-    mov 32(%rbp), %rdx
-    int $SYSCALL_INTERRUPT
-
-    mov %rbp, %rsp
-    pop %rbp
-    ret
-
-# close
-#
-# PARAMETERS:
-# 1. filedescriptor - file to close
-#
-# RETURNS:
-# zero, or error code
-.type close, @function
-close:
-    push %rbp
-    mov %rsp, %rbp
-
-    mov $SYSCALL_CLOSE, %rax
-    mov 16(%rbp), %rbx
-    int $SYSCALL_INTERRUPT
-
-    mov %rbp, %rsp
-    pop %rbp
-    ret
-
-# read
-#
-# PARAMETERS:
-# 1. filedescriptor - file to read
-# 2. buffer - to write data to
-# 3. size - size of buffer / number of bytes to read
-#
-# RETURNS:
-# number of bytes read, or error code
-.type read, @function
-read:
-    push %rbp
-    mov %rsp, %rbp
-
-    mov $SYSCALL_READ, %rax
-    mov 16(%rbp), %rbx
-    mov 24(%rbp), %rcx
-    mov 32(%rbp), %rdx
-    int $SYSCALL_INTERRUPT
-
-    mov %rbp, %rsp
-    pop %rbp
-    ret
-
-# write
-#
-# PARAMETERS:
-# 1. filedescriptor - file to write
-# 2. buffer - to read data from
-# 3. size - size of buffer / number of bytes to write
-#
-# RETURNS:
-# number of bytes written, or error code
-.type write, @function
-write:
-    push %rbp
-    mov %rsp, %rbp
-
-    mov $SYSCALL_WRITE, %rax
-    mov 16(%rbp), %rbx
-    mov 24(%rbp), %rcx
-    mov 32(%rbp), %rdx
-    int $SYSCALL_INTERRUPT
-
-    mov %rbp, %rsp
-    pop %rbp
-    ret
 
 # to_upper
 #

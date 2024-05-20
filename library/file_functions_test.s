@@ -8,9 +8,6 @@
 
 .section .data
 
-HELLO_WORLD:
-    .ascii "Hello World!\n\0"
-
 FILENAME:
     .ascii "textfile.txt\0"
 
@@ -18,20 +15,15 @@ FILENAME:
 .globl _start
 _start:
 
-    # print standard: hello world
-    # push $HELLO_WORLD
-    # call print_standard
-    # add $8, %rsp
-
-    # print error: hello world
-    # push $HELLO_WORLD
-    # call print_error
-    # add $8, %rsp
-
-    # print this file
+    # print a given file
+    # NOTE: This testcase tests most of the helper functions, as it
+    # - opens the file for reading
+    # - reads the file
+    # - prints to standard output (i.e. write)
+    # - and closes the given file
     push $FILENAME
     call print_file
-    add $8, %rsp   
+    add $8, %rsp
 
     # exit
     push $0

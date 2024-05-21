@@ -204,7 +204,7 @@ print_helper:
 #
 # PARAMETERS:
 # 1. filename - name of file to be opened
-# 2. intentions - mode of file (/usr/include/asm/fcntl.h)
+# 2. intentions - mode of file (/usr/include/asm-generic/fcntl.h)
 # 3. permissions - permission octet (only relevant, if file is created)
 #
 # RETURNS:

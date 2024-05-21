@@ -1,2 +1,4 @@
 *.o
 *.bin
+
+04_reading_and_writing_simple_records/record.dat

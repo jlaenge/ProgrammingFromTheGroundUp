@@ -30,47 +30,47 @@ record_create:
     mov %rsp, %rbp
 
     # copy firstname
-    mov 16(%rbp), %rax
-    mov 24(%rbp), %rbx
+    mov 24(%rbp), %rax
+    mov 16(%rbp), %rbx
     add $RECORD_FIRSTNAME, %rbx
     push $RECORD_LASTNAME - RECORD_FIRSTNAME
     push %rbx
     push %rax
-    call memory_copy
-    add 16, %rsp
+    call string_copy
+    add $16, %rsp
 
     # copy lastname
-    mov 16(%rbp), %rax
-    mov 32(%rbp), %rbx
+    mov 32(%rbp), %rax
+    mov 16(%rbp), %rbx
     add $RECORD_LASTNAME, %rbx
     push $RECORD_ADDRESS - RECORD_LASTNAME
     push %rbx
     push %rax
-    call memory_copy
-    add 16, %rsp
+    call string_copy
+    add $16, %rsp
 
     # copy address
-    mov 16(%rbp), %rax
-    mov 40(%rbp), %rbx
+    mov 40(%rbp), %rax
+    mov 16(%rbp), %rbx
     add $RECORD_ADDRESS, %rbx
     push $RECORD_AGE - RECORD_ADDRESS
     push %rbx
     push %rax
-    call memory_copy
-    add 16, %rsp
+    call string_copy
+    add $16, %rsp
 
     # copy age
-    mov 16(%rbp), %rax
-    mov 48(%rbp), %rbx
+    mov 48(%rbp), %rax
+    mov 16(%rbp), %rbx
     add $RECORD_AGE, %rbx
     push $RECORD_SIZE - RECORD_AGE
     push %rbx
     push %rax
-    call memory_copy
-    add 16, %rsp
+    call string_copy
+    add $16, %rsp
 
     mov %rbp, %rsp
-    pop %rsp
+    pop %rbp
     ret
 
 # record_write
@@ -102,5 +102,5 @@ record_write:
     add $16, %rsp
 
     mov %rbp, %rsp
-    pop %rsp
+    pop %rbp
     ret

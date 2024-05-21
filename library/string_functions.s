@@ -20,12 +20,67 @@
 
 .section .text
 
+.globl string_copy
 .globl string_length
 .globl to_upper
 
+# string_copy
+#
+# DESCRIPTION: copys a given string to another memory location.
+#
+# PARAMETERS:
+# 1. source - a null-terminated string from with to copy
+# 2. target - a memory location to which the string should be copied
+# 3. length - size of target (i.e. maximum number of characters to copy)
+#
+# RETURNS: NONE
+.type string_copy, @function
+string_copy:
+    push %rbp
+    mov %rsp, %rbp
+
+    # retrieve parameters
+    mov 16(%rbp), %rax
+    mov 24(%rbp), %rbx
+    mov 32(%rbp), %rcx
+
+    cmp $0, %rcx
+    je string_copy_end
+
+    # copy string character by character
+    string_copy_loop:
+
+    # check if length is exceeded
+    cmp $1, %rcx
+    je string_copy_nullterminate
+
+    # load next character
+    movb (%rax), %dl
+    cmp $NULL_TERMINATOR, %dl
+    je string_copy_nullterminate
+
+    # copy character
+    movb %dl, (%rbx)
+
+    # prepare next iteration
+    inc %rax
+    inc %rbx
+    dec %rcx
+    jmp string_copy_loop
+
+    string_copy_nullterminate:
+
+    movb $0, (%rax)
+
+    string_copy_end:
+
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
 # string_length
 #
-# DESCRIPTION: computes the number of characters in the string
+# DESCRIPTION: computes the number of characters in the string.
 #
 # PARAMETERS:
 # 1. pointer - to start of string

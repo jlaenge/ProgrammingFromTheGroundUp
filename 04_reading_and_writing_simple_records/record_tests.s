@@ -5,7 +5,10 @@ STRING_STARTUP_MSG:
     .ascii "Running record tests...\n\0"
 
 STRING_DB_OPEN_ERROR:
-    .ascii "Could not open database!\0"
+    .ascii "Error opening database file!\0"
+
+STRING_DB_CLOSE_ERROR:
+    .ascii "Error closing database file!\0"
 
 DB_FILE_NAME:
     .ascii "record.dat\0"
@@ -62,9 +65,17 @@ _start:
     # write record
     mov ST_DATABASE_FD(%rbp), %rax
     push %rax           # FD of database
+    push $MY_RECORD     # Record to write
     call record_write
+    add $16, %rsp
+
+    # close database file
+    mov ST_DATABASE_FD(%rbp), %rax
+    push %rax
+    call db_close
     add $8, %rsp
 
+    # exit program
     mov %rbp, %rsp
     pop %rbp
 
@@ -89,7 +100,7 @@ db_open:
     push %rbp
     mov %rsp, %rbp
 
-    # retrieve parameter
+    # retrieve parameter: filename
     mov 16(%rbp), %rax
 
     # attempt to open database
@@ -116,6 +127,34 @@ db_open:
     db_open_end:
 
     # clean up stack frame
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+.type db_close, @function
+db_close:
+    push %rbp
+    mov %rsp, %rbp
+
+    # retrieve parameter: filedescriptor
+    mov 16(%rbp), %rax
+
+    # close file
+    push %rax
+    call close
+    add $8, %rsp
+
+    # check return code
+    cmp $0, %rax
+    je db_close_end
+
+    # print error message
+    push $STRING_DB_CLOSE_ERROR
+    call print_error
+    add $8, %rsp
+
+    db_close_end:
+
     mov %rbp, %rsp
     pop %rbp
     ret

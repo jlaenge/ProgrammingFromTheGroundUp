@@ -197,6 +197,112 @@ print_helper:
 
 
 # ==============================================================================
+# HIGHER-LEVEL READ FUNCTIONS
+# ==============================================================================
+
+.section .text
+
+.globl read_line_standard
+.globl read_line
+
+# read_line_standard
+#
+# DESCRIPTION: Read a line from STDIN.
+#
+# PARAMETERS:
+# 1. buffer - into which to read
+# 2. size   - limit of buffer
+#
+# RETURNS: error_code
+.type read_line_standard, @function
+read_line_standard:
+    push %rbp
+    mov %rsp, %rbp
+
+    mov 16(%rbp), %rax
+    mov 24(%rbp), %rbx
+    push %rbx
+    push %rax
+    push $FD_STDIN
+    call read_line
+    add $16, %rsp
+
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+# read_line
+#
+# DESCRIPTION: Reads in a line (i.e. until the next linebreak), or until the
+# buffer is full
+#
+# PARAMETERS:
+# 1. filedescriptor - from which to read
+# 2. buffer         - into which to read
+# 3. size           - limit of buffer
+#
+# RETURNS: error_code
+.type read_line, @function
+read_line:
+    push %rbp
+    mov %rsp, %rbp
+
+    # retrieve parameters
+    mov 16(%rbp), %rax
+    mov 24(%rbp), %rbx
+    mov 32(%rbp), %rcx
+
+    cmp $0, %rcx
+    je read_line_end
+
+    read_line_loop:
+
+        # check for end of buffer
+        cmp $1, %rcx
+        je read_line_nullterminate
+
+        # read single character
+        # TODO: for STDIN, we probably what to introduce a buffer that allows
+        # us to read multiple characters and only consume the number of
+        # characters requested by the user.
+        # But for now, we'll be lazy
+        push $1
+        push %rbx
+        push %rax
+        call read
+        add $24, %rsp
+
+        # check for read errors
+        cmp $1, %rax
+        jne read_line_end
+
+        # re-read parameters
+        mov 16(%rbp), %rax
+        mov 24(%rbp), %rbx
+        mov 32(%rbp), %rcx
+
+        # check for linebreak
+        movb (%rbx), %dl
+        cmp $'\n', %dl
+        je read_line_nullterminate
+
+        # prepare next iteration
+        inc %rbx
+        dec %rcx
+        mov %rbx, 24(%rbp)
+        mov %rcx, 32(%rbp)
+
+        jmp read_line_loop
+
+    read_line_nullterminate:
+    movb $0, (%rbx)
+
+    read_line_end:
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+# ==============================================================================
 # FILE FUNCTIONS
 # ==============================================================================
 

@@ -51,21 +51,15 @@ _start:
     call db_open
     mov %rax, ST_DATABASE_FD(%rbp)
 
-    # TODO: create and write record
-
-    # create record
-    push $MY_AGE
-    push $MY_ADDRESS
-    push $MY_LASTNAME
-    push $MY_FIRSTNAME
+    # prompt record
     push $MY_RECORD
-    call record_create
-    add $40, %rsp
+    call record_prompt
+    add $8, %rsp
 
     # print record
-    push $MY_RECORD
-    call record_print
-    add $8, %rsp
+    # push $MY_RECORD
+    # call record_print
+    # add $8, %rsp
 
     # write record
     mov ST_DATABASE_FD(%rbp), %rax

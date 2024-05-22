@@ -8,6 +8,8 @@
 .include "record_definition.s"
 
 .section .data
+STRING_PROMPT_RECORD:
+    .ascii "Please enter record...\n\0"
 STRING_FIRSTNAME:
     .ascii "Firstname: \0"
 STRING_LASTNAME:
@@ -22,6 +24,7 @@ STRING_LINEBREAK:
 .section .text
 
 .globl record_create
+.globl record_prompt
 .globl record_print
 .globl record_write
 
@@ -80,6 +83,76 @@ record_create:
     push %rbx
     push %rax
     call string_copy
+    add $16, %rsp
+
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+# record_prompt
+#
+# DESCRIPTION: Prompts the input of a record via STDIN.
+#
+# PARAMETERS:
+# 1. record - pointer to record to populate
+#
+# RETURNS: NONE
+.type record_prompt, @function
+record_prompt:
+    push %rbp
+    mov %rsp, %rbp
+
+    # prompt
+    push $STRING_PROMPT_RECORD
+    call print_standard
+    add $8, %rsp
+
+    # firstname
+    push $STRING_FIRSTNAME
+    call print_standard
+    add $8, %rsp
+
+    mov 16(%rbp), %rax
+    add $RECORD_FIRSTNAME, %rax
+    push $RECORD_LASTNAME - RECORD_FIRSTNAME
+    push %rax
+    call read_line_standard
+    add $16, %rsp
+
+    # lastname
+    push $STRING_LASTNAME
+    call print_standard
+    add $8, %rsp
+
+    mov 16(%rbp), %rax
+    add $RECORD_LASTNAME, %rax
+    push $RECORD_ADDRESS - RECORD_LASTNAME
+    push %rax
+    call read_line_standard
+    add $16, %rsp
+
+    # address
+    push $STRING_ADDRESS
+    call print_standard
+    add $8, %rsp
+
+    mov 16(%rbp), %rax
+    add $RECORD_ADDRESS, %rax
+    push $RECORD_AGE - RECORD_ADDRESS
+    push %rax
+    call read_line_standard
+    add $16, %rsp
+
+    # age
+    push $STRING_AGE
+    call print_standard
+    add $8, %rsp
+
+    mov 16(%rbp), %rax
+    add $RECORD_AGE, %rax
+    push $RECORD_SIZE - RECORD_AGE
+    push %rax
+    call read_line_standard
     add $16, %rsp
 
     mov %rbp, %rsp

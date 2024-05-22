@@ -7,9 +7,22 @@
 
 .include "record_definition.s"
 
+.section .data
+STRING_FIRSTNAME:
+    .ascii "Firstname: \0"
+STRING_LASTNAME:
+    .ascii "Lastname: \0"
+STRING_ADDRESS:
+    .ascii "Address: \0"
+STRING_AGE:
+    .ascii "Age: \0"
+STRING_LINEBREAK:
+    .ascii "\n\0"
+
 .section .text
 
 .globl record_create
+.globl record_print
 .globl record_write
 
 # record_create
@@ -68,6 +81,75 @@ record_create:
     push %rax
     call string_copy
     add $16, %rsp
+
+    mov %rbp, %rsp
+    pop %rbp
+    ret
+
+# record_print
+#
+# DESCRIPTION: Prints a given record to STDOUT.
+#
+# PARAMETERS:
+# 1. record - pointer to record to print
+#
+# RETURNS: NONE
+.type record_print, @function
+record_print:
+    push %rbp
+    mov %rsp, %rbp
+
+    # print firstname
+    push $STRING_FIRSTNAME
+    call print_standard
+    add $8, %rsp
+    mov 16(%rbp), %rax
+    add $RECORD_FIRSTNAME, %rax
+    push %rax
+    call print_standard
+    add $8, %rsp
+    push $STRING_LINEBREAK
+    call print_standard
+    add $8, %rsp
+
+    # print lastname
+    push $STRING_LASTNAME
+    call print_standard
+    add $8, %rsp
+    mov 16(%rbp), %rax
+    add $RECORD_LASTNAME, %rax
+    push %rax
+    call print_standard
+    add $8, %rsp
+    push $STRING_LINEBREAK
+    call print_standard
+    add $8, %rsp
+
+    # print address
+    push $STRING_ADDRESS
+    call print_standard
+    add $8, %rsp
+    mov 16(%rbp), %rax
+    add $RECORD_ADDRESS, %rax
+    push %rax
+    call print_standard
+    add $8, %rsp
+    push $STRING_LINEBREAK
+    call print_standard
+    add $8, %rsp
+
+    # print age
+    push $STRING_AGE
+    call print_standard
+    add $8, %rsp
+    mov 16(%rbp), %rax
+    add $RECORD_AGE, %rax
+    push %rax
+    call print_standard
+    add $8, %rsp
+    push $STRING_LINEBREAK
+    call print_standard
+    add $8, %rsp
 
     mov %rbp, %rsp
     pop %rbp

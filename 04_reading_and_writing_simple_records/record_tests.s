@@ -62,6 +62,11 @@ _start:
     call record_create
     add $40, %rsp
 
+    # print record
+    push $MY_RECORD
+    call record_print
+    add $8, %rsp
+
     # write record
     mov ST_DATABASE_FD(%rbp), %rax
     push %rax           # FD of database

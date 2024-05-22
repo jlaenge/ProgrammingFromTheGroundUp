@@ -3,12 +3,8 @@
 .section .data
 STRING_STARTUP_MSG:
     .ascii "Running record tests...\n\0"
-
-STRING_DB_OPEN_ERROR:
-    .ascii "Error opening database file!\0"
-
-STRING_DB_CLOSE_ERROR:
-    .ascii "Error closing database file!\0"
+STRING_SUCCESS_MSG:
+    .ascii "[DONE]\n\0"
 
 DB_FILE_NAME:
     .ascii "record.dat\0"
@@ -49,6 +45,7 @@ _start:
     # open database file for writing
     push $DB_FILE_NAME     # Filename
     call db_open
+    add $8, %rsp
     mov %rax, ST_DATABASE_FD(%rbp)
 
     # prompt record
@@ -92,12 +89,24 @@ _start:
 # RETURNS: filedescriptor of the database file
 # The function does not have a return code, however it may exit the program,
 # in case the database could not be openend successfully
+.section .data
+STRING_LOADDB_MSG:
+    .ascii "Loading database...\0"
+STRING_DB_OPEN_ERROR:
+    .ascii "Error opening database file!\0"
+
+.section .text
 .type db_open, @function
 db_open:
 
     # create stack frame
     push %rbp
     mov %rsp, %rbp
+    sub $8, %rsp
+
+    push $STRING_LOADDB_MSG
+    call print_standard
+    add $8, %rsp
 
     # retrieve parameter: filename
     mov 16(%rbp), %rax
@@ -108,6 +117,7 @@ db_open:
     push %rax   # Filename
     call open
     add $24, %rsp
+    mov %rax, -8(%rbp)
 
     # check return code
     cmp $0, %rax
@@ -125,15 +135,35 @@ db_open:
 
     db_open_end:
 
+    # print success message
+    push $STRING_SUCCESS_MSG
+    call print_standard
+    add $8, %rsp
+
+    # retrieve filedescriptor
+    mov -8(%rbp), %rax
+
     # clean up stack frame
     mov %rbp, %rsp
     pop %rbp
     ret
 
+.section .data
+STRING_CLOSEDB_MSG:
+    .ascii "Closing database...\0"
+STRING_DB_CLOSE_ERROR:
+    .ascii "Error closing database file!\0"
+
+.section .text
 .type db_close, @function
 db_close:
     push %rbp
     mov %rsp, %rbp
+
+    # print closing message
+    push $STRING_CLOSEDB_MSG
+    call print_standard
+    add $8, %rsp
 
     # retrieve parameter: filedescriptor
     mov 16(%rbp), %rax
@@ -151,8 +181,16 @@ db_close:
     push $STRING_DB_CLOSE_ERROR
     call print_error
     add $8, %rsp
+    push $1
+    call exit
+    add $8, %rsp
 
     db_close_end:
+
+    # print closing message
+    push $STRING_SUCCESS_MSG
+    call print_standard
+    add $8, %rsp
 
     mov %rbp, %rsp
     pop %rbp

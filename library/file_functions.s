@@ -200,10 +200,30 @@ print_helper:
 # HIGHER-LEVEL READ FUNCTIONS
 # ==============================================================================
 
-.section .text
-
+.globl read_char
 .globl read_line_standard
 .globl read_line
+
+.section .bss
+.lcomm CHAR_BUFFER, 1
+
+.section .text
+.type read_char, @function
+read_char:
+    push %rbp
+    mov %rsp, %rbp
+
+    push $1
+    push $CHAR_BUFFER
+    push $FD_STDIN
+    call read
+    add $24, %rsp
+
+    movb CHAR_BUFFER, %al
+
+    mov %rbp, %rsp
+    pop %rbp
+    ret
 
 # read_line_standard
 #
@@ -214,6 +234,7 @@ print_helper:
 # 2. size   - limit of buffer
 #
 # RETURNS: error_code
+.section .text
 .type read_line_standard, @function
 read_line_standard:
     push %rbp
